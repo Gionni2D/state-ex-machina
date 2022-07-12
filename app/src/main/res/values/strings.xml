@@ -1,3 +1,6 @@
 <resources>
 	<string name="app_name">Mvi</string>
+	<string name="login_cta_login">Login</string>
+	<string name="login_field_username_label">Username</string>
+	<string name="login_field_password_label">Password</string>
 </resources>
