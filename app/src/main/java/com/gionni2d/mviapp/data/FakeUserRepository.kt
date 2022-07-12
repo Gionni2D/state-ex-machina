@@ -1,5 +1,6 @@
 package com.gionni2d.mviapp.data
 
+import com.gionni2d.mviapp.domain.AuthenticationStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,8 +12,19 @@ class FakeUserRepository @Inject constructor() : UserRepository {
         "mario.rossi" to "password1"
     )
 
-    override fun login(username: String, password: String): Flow<Boolean> = flow {
+    override fun login(
+        username: String,
+        password: String
+    ): Flow<AuthenticationStatus> = flow {
         delay(1000)
-        emit(users.containsKey(username) && users[username] == password)
+        emit(
+            if (users[username] == password) AuthenticationStatus.LOGGED
+            else AuthenticationStatus.ANONYMOUS
+        )
+    }
+
+    override fun logout(): Flow<Unit> = flow {
+        delay(2000)
+        emit(Unit)
     }
 }

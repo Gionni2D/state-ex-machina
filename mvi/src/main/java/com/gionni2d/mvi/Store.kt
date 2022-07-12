@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 interface Store<S : State> {
-    val value: S
+    val currentState: S
     val stateFlow: StateFlow<S>
 
     fun update(transform: (S) -> S): S
@@ -15,10 +15,10 @@ interface Store<S : State> {
 private class FlowStore<S : State>(initialValue: S) : Store<S> {
     private val _stateFlow = MutableStateFlow(initialValue)
 
-    override val value: S by _stateFlow::value
+    override val currentState: S by _stateFlow::value
     override val stateFlow: StateFlow<S> = _stateFlow.asStateFlow()
 
-    override fun update(transform: (S) -> S): S = _stateFlow.update(transform).let { value }
+    override fun update(transform: (S) -> S): S = _stateFlow.update(transform).let { currentState }
 }
 
 fun <S : State> store(initialValue: S): Store<S> = FlowStore(initialValue)
