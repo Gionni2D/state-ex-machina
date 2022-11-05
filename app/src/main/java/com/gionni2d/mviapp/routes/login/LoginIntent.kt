@@ -15,4 +15,4 @@ sealed interface LoginIntent : Intent {
     object Logout : LoginIntent, SerializableObject("Logout")
 }
 
-data class AuthenticationResponse(val value: AuthenticationStatus) : Event
+data class AuthenticationResponse(val value: Result<AuthenticationStatus>) : Event

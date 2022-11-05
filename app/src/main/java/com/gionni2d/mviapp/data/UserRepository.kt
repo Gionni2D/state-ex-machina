@@ -1,13 +1,14 @@
 package com.gionni2d.mviapp.data
 
 import com.gionni2d.mviapp.domain.AuthenticationStatus
+import com.gionni2d.mviapp.domain.ResultFlow
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     fun login(
         username: String,
         password: String
-    ) : Flow<AuthenticationStatus>
+    ) : ResultFlow<AuthenticationStatus>
 
-    fun logout() : Flow<Unit>
+    fun logout() : ResultFlow<Unit>
 }

@@ -9,12 +9,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.gionni2d.mvi.compose.MviComponents
-import com.gionni2d.mvi.compose.intentsFlowForCompose
 import com.gionni2d.mvi.compose.rememberMviComponent
-import com.gionni2d.mviapp.routes.login.LoginIntent
 import com.gionni2d.mviapp.routes.login.LoginScreen
 import com.gionni2d.mviapp.routes.login.LoginViewModel
 import com.gionni2d.mviapp.ui.theme.MviTheme

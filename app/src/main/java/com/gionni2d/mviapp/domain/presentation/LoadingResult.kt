@@ -22,3 +22,8 @@ fun <E> LoadingResult<*, E>.isFailure() : Boolean {
     contract { returns(true) implies (this@isFailure is LoadingResult.Failure) }
     return this is LoadingResult.Failure
 }
+
+fun <R> Result<R>.toLoadingResult() : LoadingResult<R, Throwable> = this.fold(
+    onSuccess = { LoadingResult.Success(it) },
+    onFailure = { LoadingResult.Failure(it) }
+)

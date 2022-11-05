@@ -2,6 +2,7 @@ package com.gionni2d.mviapp.routes.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -37,11 +38,18 @@ fun LoginScreen(
             )
             Spacer4()
         }
+        state.errorMessage?.let {
+            Text(
+                text = it.toLocalizedString(),
+                color = MaterialTheme.colors.error
+            )
+            Spacer4()
+        }
         LoadingButton(
             text = state.buttonText.toLocalizedString(),
             loading = state.buttonLoading,
             onClick = {
-                val intent = if (state.isLogged) LoginIntent.Logout else LoginIntent.Login
+                val intent = state.buttonIntent
                 intent.let(onIntent)
             }
         )

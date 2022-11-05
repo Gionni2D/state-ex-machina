@@ -1,13 +1,13 @@
 package com.gionni2d.mviapp.routes.login
 
+import android.icu.text.DecimalFormatSymbols
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gionni2d.mvi.*
 import com.gionni2d.mviapp.data.UserRepository
 import com.gionni2d.mviapp.domain.AuthenticationStatus
-import com.gionni2d.mviapp.domain.presentation.LoadingResult.Loading
-import com.gionni2d.mviapp.domain.presentation.LoadingResult.Success
 import com.gionni2d.mviapp.domain.presentation.isLoading
+import com.gionni2d.mviapp.domain.success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
             .applyReducer(store) { s, i -> s.copy(password = i.value) }
 
         val notLoadingIntentFlow = intents
-            .filterNot { state.authStatus.isLoading() }
+            .filterNot { state.isLoading }
 
         val clickLoginButtonFlow = notLoadingIntentFlow
             .filterIsInstance<LoginIntent.Login>()
@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
             .filterIsInstance<LoginIntent.Logout>()
             .applyReducer(store, LoginReducer.StartLoading)
             .flatMapConcat { userRepository.logout() }
-            .map { AuthenticationResponse(AuthenticationStatus.ANONYMOUS) }
+            .map { AuthenticationResponse(AuthenticationStatus.ANONYMOUS.success()) }
             .applyReducer(store, LoginReducer.UpdateAuthentication)
 
         merge(
