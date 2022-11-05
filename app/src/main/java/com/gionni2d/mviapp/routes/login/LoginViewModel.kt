@@ -17,6 +17,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val loginReducers: LoginReducers
 ) : ViewModel(), Model<LoginViewState, LoginIntent> {
 
     override fun subscribeTo(
@@ -27,28 +28,28 @@ class LoginViewModel @Inject constructor(
 
         val typeUsernameFlow = intents
             .filterIsInstance<LoginIntent.TypeUsername>()
-            .applyReducer(store) { s, i -> s.copy(username = i.value) }
+            .applyReducer(store, loginReducers.typeUsername)
 
         val typePasswordFlow = intents
             .filterIsInstance<LoginIntent.TypePassword>()
-            .applyReducer(store) { s, i -> s.copy(password = i.value) }
+            .applyReducer(store, loginReducers.typePassword)
 
         val notLoadingIntentFlow = intents
             .filterNot { state.isLoading }
 
         val clickLoginButtonFlow = notLoadingIntentFlow
             .filterIsInstance<LoginIntent.Login>()
-            .applyReducer(store, LoginReducer.StartLoading)
+            .applyReducer(store, loginReducers.startLoading)
             .flatMapConcat { userRepository.login(state.username, state.password) }
             .map(::AuthenticationResponse)
-            .applyReducer(store, LoginReducer.UpdateAuthentication)
+            .applyReducer(store, loginReducers.updateAuthentication)
 
         val clickLogoutButtonFlow = notLoadingIntentFlow
             .filterIsInstance<LoginIntent.Logout>()
-            .applyReducer(store, LoginReducer.StartLoading)
+            .applyReducer(store, loginReducers.startLoading)
             .flatMapConcat { userRepository.logout() }
             .map { AuthenticationResponse(AuthenticationStatus.ANONYMOUS.success()) }
-            .applyReducer(store, LoginReducer.UpdateAuthentication)
+            .applyReducer(store, loginReducers.updateAuthentication)
 
         merge(
             typeUsernameFlow,
@@ -58,15 +59,5 @@ class LoginViewModel @Inject constructor(
         ).launchIn(viewModelScope)
 
         return store.stateFlow
-    }
-}
-
-object LoginReducer {
-    val StartLoading = Reducer<LoginState, Action> { s, _ ->
-        s.copy(authStatus = Loading)
-    }
-
-    val UpdateAuthentication = Reducer<LoginState, AuthenticationResponse> { s, i ->
-        s.copy(authStatus = Success(i.value))
     }
 }
