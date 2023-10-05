@@ -1,12 +1,13 @@
 package com.gionni2d.mviapp.routes.login
 
-import android.icu.text.DecimalFormatSymbols
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gionni2d.mvi.*
+import com.gionni2d.mvi.extension.applyReducer
+import com.gionni2d.mvi.foundation.Model
+import com.gionni2d.mvi.foundation.store
 import com.gionni2d.mviapp.data.UserRepository
 import com.gionni2d.mviapp.domain.AuthenticationStatus
-import com.gionni2d.mviapp.domain.presentation.isLoading
 import com.gionni2d.mviapp.domain.success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val loginReducers: LoginReducers
+    private val loginReducerFactory: LoginReducerFactory
 ) : ViewModel(), Model<LoginViewState, LoginIntent> {
 
     override fun subscribeTo(
@@ -28,28 +29,27 @@ class LoginViewModel @Inject constructor(
 
         val typeUsernameFlow = intents
             .filterIsInstance<LoginIntent.TypeUsername>()
-            .applyReducer(store, loginReducers.typeUsername)
+            .applyReducer(store, loginReducerFactory::typeUsername)
 
         val typePasswordFlow = intents
             .filterIsInstance<LoginIntent.TypePassword>()
-            .applyReducer(store, loginReducers.typePassword)
+            .applyReducer(store, loginReducerFactory::typePassword)
 
         val notLoadingIntentFlow = intents
             .filterNot { state.isLoading }
 
         val clickLoginButtonFlow = notLoadingIntentFlow
             .filterIsInstance<LoginIntent.Login>()
-            .applyReducer(store, loginReducers.startLoading)
+            .applyReducer(store, loginReducerFactory.startLoading)
             .flatMapConcat { userRepository.login(state.username, state.password) }
-            .map(::AuthenticationResponse)
-            .applyReducer(store, loginReducers.updateAuthentication)
+            .applyReducer(store, loginReducerFactory::updateAuthentication)
 
         val clickLogoutButtonFlow = notLoadingIntentFlow
             .filterIsInstance<LoginIntent.Logout>()
-            .applyReducer(store, loginReducers.startLoading)
+            .applyReducer(store, loginReducerFactory.startLoading)
             .flatMapConcat { userRepository.logout() }
-            .map { AuthenticationResponse(AuthenticationStatus.ANONYMOUS.success()) }
-            .applyReducer(store, loginReducers.updateAuthentication)
+            .map { AuthenticationStatus.ANONYMOUS.success() }
+            .applyReducer(store, loginReducerFactory::updateAuthentication)
 
         merge(
             typeUsernameFlow,

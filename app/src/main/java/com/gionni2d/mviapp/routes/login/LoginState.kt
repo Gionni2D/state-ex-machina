@@ -1,6 +1,6 @@
 package com.gionni2d.mviapp.routes.login
 
-import com.gionni2d.mvi.State
+import com.gionni2d.mvi.foundation.State
 import com.gionni2d.mviapp.R
 import com.gionni2d.mviapp.domain.AuthenticationStatus
 import com.gionni2d.mviapp.domain.AuthenticationStatus.ANONYMOUS

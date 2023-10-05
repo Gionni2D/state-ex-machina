@@ -2,8 +2,8 @@ package com.gionni2d.mviapp.di
 
 import com.gionni2d.mviapp.data.FakeUserRepository
 import com.gionni2d.mviapp.data.UserRepository
-import com.gionni2d.mviapp.routes.login.LoginReducers
-import com.gionni2d.mviapp.routes.login.LoginReducersImpl
+import com.gionni2d.mviapp.routes.login.LoginReducerFactory
+import com.gionni2d.mviapp.routes.login.LoginReducerFactoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,5 +17,5 @@ class RepositoryModule {
     fun provideUserRepository(impl: FakeUserRepository): UserRepository = impl
 
     @Provides
-    fun provideLoginReducers(): LoginReducers = LoginReducersImpl
+    fun provideLoginReducers(): LoginReducerFactory = LoginReducerFactoryImpl
 }
