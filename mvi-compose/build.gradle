@@ -33,6 +33,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
+    namespace 'com.gionni2d.mvi.compose'
 }
 
 dependencies {
