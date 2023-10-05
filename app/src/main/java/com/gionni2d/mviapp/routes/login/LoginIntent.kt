@@ -1,8 +1,6 @@
 package com.gionni2d.mviapp.routes.login
 
-import com.gionni2d.mvi.Event
-import com.gionni2d.mvi.Intent
-import com.gionni2d.mviapp.domain.AuthenticationStatus
+import com.gionni2d.mvi.foundation.Intent
 import com.gionni2d.mviapp.utils.debug.SerializableObject
 
 sealed interface LoginIntent : Intent {
@@ -14,5 +12,3 @@ sealed interface LoginIntent : Intent {
     object Login : LoginIntent, SerializableObject("Login")
     object Logout : LoginIntent, SerializableObject("Logout")
 }
-
-data class AuthenticationResponse(val value: Result<AuthenticationStatus>) : Event

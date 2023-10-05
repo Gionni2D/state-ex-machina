@@ -3,9 +3,9 @@ package com.gionni2d.mvi.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.gionni2d.mvi.Intent
-import com.gionni2d.mvi.Model
-import com.gionni2d.mvi.State
+import com.gionni2d.mvi.foundation.Intent
+import com.gionni2d.mvi.foundation.Model
+import com.gionni2d.mvi.foundation.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
