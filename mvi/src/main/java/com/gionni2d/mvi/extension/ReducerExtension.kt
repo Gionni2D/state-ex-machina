@@ -13,3 +13,5 @@ fun <S : State> concatReducers(
 ) = Reducer<S> { s ->
     reducers.filterNotNull().fold(s) { accS, reducer -> reducer.reduce(accS) }
 }
+
+fun <S : State> Reducer.Companion.identity() = Reducer<S> { it }

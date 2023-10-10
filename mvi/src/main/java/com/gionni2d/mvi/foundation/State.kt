@@ -12,6 +12,8 @@ interface State
  */
 fun interface Reducer<S : State> {
     fun reduce(state: S): S
+
+    companion object
 }
 
 /**
