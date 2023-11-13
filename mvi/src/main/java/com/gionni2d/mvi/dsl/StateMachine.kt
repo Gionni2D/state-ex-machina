@@ -6,12 +6,13 @@ import com.gionni2d.mvi.foundation.State
 import com.gionni2d.mvi.foundation.Store
 import com.gionni2d.mvi.foundation.store
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEach
-import com.gionni2d.mvi.dsl.ActionScope as ActionScope
 
 fun <S : State, I : Intent> stateMachine(
     initialState: S,
@@ -56,9 +57,12 @@ class StateMachineBuilder<S : State, I : Intent>(
             reducerBuilder: (D) -> Reducer<S>
         ) = sideEffect { updateState(reducerBuilder(it)) }
 
+        @OptIn(FlowPreview::class)
         override fun sideEffect(
             block: suspend SideEffectScope<S>.(D) -> Unit
-        ) = rawSideEffect { flow -> flow.onEach { block(it) } }
+        ) = rawSideEffect { flow ->
+            flow.flatMapMerge { flow<Nothing> { block(it) } }
+        }
 
         override fun rawSideEffect(
             block: SideEffectScope<S>.(Flow<D>) -> Flow<*>
