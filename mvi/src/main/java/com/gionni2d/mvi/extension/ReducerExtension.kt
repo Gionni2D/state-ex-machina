@@ -15,3 +15,10 @@ fun <S : State> concatReducers(
 }
 
 fun <S : State> Reducer.Companion.identity() = Reducer<S> { it }
+
+fun <A : State, B : State> Reducer<B>.map(
+    getter: A.() -> B,
+    updater: A.(B) -> A
+): Reducer<A> = Reducer { s1: A ->
+    s1.updater(this.reduce(s1.getter()))
+}
