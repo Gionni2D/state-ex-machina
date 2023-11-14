@@ -1,13 +1,35 @@
-# state-ex-machine
-State Ex Machine is a Redux / MVI-like library written in Kotlin for Android.
+# State Ex Machina
+
+State Ex Machina is a MVI-like library written in Kotlin for Android.
+TODO
+- Why another MVI library?
+- Core concepts
+  - state machine, how and why?
+  - reactive, how and why?
+  - declarative model definition, how and why?
+  - good DSL
+  - lightweight
 
 ## Getting started
 
+TODO
+- explain the example
+
+### Define the dependencies
+
 ```kotlin
-implementation("com.state-ex-machine:core:<latest-version>")
+// MVI foundation
+implementation("com.state-ex-machina:core:<latest-version>")
+// Jetpack Compose MVI extensions
+implementation("com.state-ex-machina:ext-compose:<latest-version>")
+// Android ViewModel MVI extensions
+implementation("com.state-ex-machina:ext-view-model:<latest-version>")
 ```
 
 ### Define the Intents
+
+TODO
+- Explain what is an intent
 
 ```kotlin
 sealed interface CounterIntent : Intent {
@@ -16,9 +38,10 @@ sealed interface CounterIntent : Intent {
 }
 ```
 
-TODO Should I explain what is an intent ?
-
 ### Define the State
+
+TODO
+- Explain what is a state 
 
 ```kotlin
 data class CounterState(
@@ -27,30 +50,9 @@ data class CounterState(
 ) : State
 ```
 
-### Create the ViewModel and Reducers
+### Define the Reducers
 
-1. Override the function subscribeTo, this is the scope where you can update the state and call coroutines 
-2. Use `on` to react to user intents
-3. You can update the state with `updateState` or use `sideEffect` to elaborate data from a repository and more
-4. alternatively you can call `launchedEffect` to always execute code when the viewModel is created TODO(?)
-
-```kotlin
-class CounterViewModel(
-    private val store: Store<CounterState>,
-    private val reducers: CounterReducers,
-) : ViewModel(), Model<CounterState, CounterIntent> {
-    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachine(
-        store = store,
-        intents = intents
-    ) {
-        on<CounterIntent.TypeNumber>() updateState { reducers.updateCounter(it.number) }
-
-        on<CounterIntent.Count>() updateState reducers.updateTotal
-    }
-}
-```
-
-Reducers is where you want to update the state, save the business logic for the viewmodel
+Reducers is where you want to define the state update logic, save the business logic for the model
 
 ```kotlin
 interface CounterReducers {
@@ -71,7 +73,42 @@ class CounterReducersImpl : CounterReducers {
 }
 ```
 
-### Wire up the ViewModel with Jetpack Compose
+### Create the Model
+
+TODO
+- add imports
+- fix code
+- add sideEffect example with counterRepository
+
+1. Create a model that implements the MVI `Model` and override the function `subscribeTo`,
+    this is the scope where you can update the state and call coroutines
+2. Use `on` to react to user intents
+3. You can update the state with `updateState` or use `sideEffect` to elaborate data from a repository and more
+4. alternatively you can call `launchedEffect` to always execute code when the viewModel is created TODO(?)
+
+```kotlin
+import *
+// ...
+
+class CounterModel(
+    private val coroutineScope: CoroutineScope
+) : Model<CounterState, CounterIntent> {
+    private val reducers: CounterReducer = CounterReducersImpl()
+    private val repository: CounterRepository = ...
+    
+    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
+        store = store(),
+        intents = intents,
+        coroutineScope = coroutineScope,
+    ) {
+        on<CounterIntent.TypeNumber>() updateState { reducers.updateCounter(it.number) }
+
+        on<CounterIntent.Count>() updateState reducers.updateTotal
+    }
+}
+```
+
+### Wire up the Model with Jetpack Compose
 
 ```kotlin
 @Composable
@@ -95,5 +132,3 @@ private fun CounterScreen(
     // render UI using data from 'state' and wire intents to UI components actions
 }
 ```
-
-
