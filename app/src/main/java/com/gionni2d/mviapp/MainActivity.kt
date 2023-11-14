@@ -7,8 +7,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.gionni2d.mvi.compose.rememberMviComponent
 import com.gionni2d.mviapp.routes.login.LoginScreen
@@ -31,8 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val (stateFlow, onIntent) = rememberMviComponent(model)
-                    val state by stateFlow.collectAsState()
+                    val (state, onIntent) = rememberMviComponent(model)
 
                     LoginScreen(
                         state = state,
