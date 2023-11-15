@@ -1,19 +1,22 @@
 # State Ex Machina
 
 State Ex Machina is a MVI-like library written in Kotlin for Android.
-TODO
-- Why another MVI library?
-- Core concepts
-  - state machine, how and why?
-  - reactive, how and why?
+
+**Why do we need another MVI library?**\
+Because we simply couldn't find one that was easy to start working with, lightweight and that would cover enough use cases.
+
+**Core concepts**
+  - state machine built on kotlin ```Flow``` to handle and store state changes  
+  - reactive state that can be applied to the UI 
   - declarative model definition, how and why?
-  - good DSL
+  - clear DSL
   - lightweight
 
 ## Getting started
 
-TODO
-- explain the example
+Here's a simple example to show off the fundaments on which the library is based on.\ 
+The user wants to insert a number, sum it with the previous inserted number (initial value is zero) and see the result.\
+Lastly saving the total sum with a network call.
 
 ### Define the dependencies
 
@@ -28,20 +31,19 @@ implementation("com.state-ex-machina:ext-view-model:<latest-version>")
 
 ### Define the Intents
 
-TODO
-- Explain what is an intent
+Intents represent user intentions: the actions with which the user achieves an objective
 
 ```kotlin
 sealed interface CounterIntent : Intent {
     data class TypeNumber(val number: Int) : CounterIntent
     object Count : CounterIntent
+    object SaveTotal : CounterIntent
 }
 ```
 
 ### Define the State
 
-TODO
-- Explain what is a state 
+State represents the current condition of the data and UI elements 
 
 ```kotlin
 data class CounterState(
@@ -75,11 +77,6 @@ class CounterReducersImpl : CounterReducers {
 
 ### Create the Model
 
-TODO
-- add imports
-- fix code
-- add sideEffect example with counterRepository
-
 1. Create a model that implements the MVI `Model` and override the function `subscribeTo`,
     this is the scope where you can update the state and call coroutines
 2. Use `on` to react to user intents
@@ -87,14 +84,15 @@ TODO
 4. alternatively you can call `launchedEffect` to always execute code when the viewModel is created TODO(?)
 
 ```kotlin
-import *
-// ...
+import com.gionni2d.mvi.foundation.Model
+import com.gionni2d.mvi.dsl.stateMachine
+import com.gionni2d.mvi.dsl.updateState 
 
 class CounterModel(
     private val coroutineScope: CoroutineScope
 ) : Model<CounterState, CounterIntent> {
     private val reducers: CounterReducer = CounterReducersImpl()
-    private val repository: CounterRepository = ...
+    private val repository: CounterRepository = CounterRepository()
     
     override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
         store = store(),
@@ -104,6 +102,10 @@ class CounterModel(
         on<CounterIntent.TypeNumber>() updateState { reducers.updateCounter(it.number) }
 
         on<CounterIntent.Count>() updateState reducers.updateTotal
+
+        on<CounterIntent.SaveTotal>() sideEffect {
+            repository.saveTotal(currentState.total)
+        }
     }
 }
 ```
