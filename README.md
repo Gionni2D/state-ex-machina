@@ -8,8 +8,8 @@ Because we simply couldn't find one that was easy to start working with, lightwe
 **Core concepts**
   - state machine built on kotlin ```Flow``` to handle and store state changes  
   - reactive state that can be applied to the UI 
-  - declarative model definition, how and why?
-  - clear DSL
+  - reactive entities at the base for both states and intents
+  - clear DSL with few core directives, open to customisation
   - lightweight
 
 ## Getting started
@@ -31,7 +31,7 @@ implementation("com.state-ex-machina:ext-view-model:<latest-version>")
 
 ### Define the Intents
 
-Intents represent user intentions: the actions with which the user achieves an objective
+Intents represent user intentions, for example the intention to type a number.
 
 ```kotlin
 sealed interface CounterIntent : Intent {
@@ -43,7 +43,7 @@ sealed interface CounterIntent : Intent {
 
 ### Define the State
 
-State represents the current condition of the data and UI elements 
+State represents a photo of all the dynamic information needed to present the view and for the model to interact with the domain (and update itself)
 
 ```kotlin
 data class CounterState(
@@ -54,15 +54,16 @@ data class CounterState(
 
 ### Define the Reducers
 
-Reducers is where you want to define the state update logic, save the business logic for the model
+A reducer is a pure function that takes in input the old state and returns a new state. 
+The ReducerFactory is where you want to define the state update logic. This is our idea and approach to implement the reducer, it is not a constraint of the library and it's up to the developers to choose how to define it.
 
 ```kotlin
-interface CounterReducers {
+interface CounterReducerFactory {
     fun updateCounter(c: Int): Reducer<CounterState>
     val updateTotal: Reducer<CounterState>
 }
 
-class CounterReducersImpl : CounterReducers {
+class CounterReducerFactoryImpl : CounterReducerFactory {
     override fun updateCounter(
         c: Int
     ) = Reducer<CounterState> { s ->
@@ -77,11 +78,13 @@ class CounterReducersImpl : CounterReducers {
 
 ### Create the Model
 
+The model holds the representation of the state and updates it with the reducers, it's the layer responsible for most of the business logic.
+
 1. Create a model that implements the MVI `Model` and override the function `subscribeTo`,
     this is the scope where you can update the state and call coroutines
 2. Use `on` to react to user intents
 3. You can update the state with `updateState` or use `sideEffect` to elaborate data from a repository and more
-4. alternatively you can call `launchedEffect` to always execute code when the viewModel is created TODO(?)
+4. Alternatively you can call `launchedEffect` to always execute code when the model is created
 
 ```kotlin
 import com.gionni2d.mvi.foundation.Model
@@ -91,7 +94,7 @@ import com.gionni2d.mvi.dsl.updateState
 class CounterModel(
     private val coroutineScope: CoroutineScope
 ) : Model<CounterState, CounterIntent> {
-    private val reducers: CounterReducer = CounterReducersImpl()
+    private val reducers: CounterReducerFactory = CounterReducerFactoryImpl()
     private val repository: CounterRepository = CounterRepository()
     
     override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
@@ -110,13 +113,29 @@ class CounterModel(
 }
 ```
 
+With the library extension for Android ViewModel we can utilize the `stateMachine` that calls for `viewModelScope` as coroutine scope.
+
+```kotlin
+import com.gionni2d.mvi.viewmodel.stateMachine
+
+class CounterModel : ViewModel(), Model<CounterState, CounterIntent> {
+
+    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
+        store = store(),
+        intents = intents
+    ) {
+        // 
+    }
+}
+```
+
+
 ### Wire up the Model with Jetpack Compose
 
 ```kotlin
 @Composable
 fun CounterScreen(model: Model<CounterState, CounterIntent>) {
-    val (stateFlow, onIntent) = rememberMviComponent(model)
-    val state by stateFlow.collectAsState()
+    val (state, onIntent) = rememberMviComponent(model)
 
     CounterScreen(
         state = state,
