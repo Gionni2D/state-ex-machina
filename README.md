@@ -85,6 +85,8 @@ The model holds the representation of the state and updates it with the reducers
 3. You can update the state with `updateState` or use `sideEffect` to elaborate data from a repository and more
 4. More functions are present in the library to cover most common use-cases (eg: `launchedEffect` always execute code when the function `subscribeTo` of the Model is called)
 
+**Model is immutable, every function or variable declared inside its scope should only be called in `subscribeTo`**
+
 ```kotlin
 import com.gionni2d.mvi.foundation.Model
 import com.gionni2d.mvi.dsl.stateMachine
