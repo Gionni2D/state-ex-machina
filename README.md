@@ -7,7 +7,6 @@ Because we simply couldn't find one that was easy to start working with, lightwe
 
 **Core concepts**
   - state machine built on kotlin ```Flow``` to handle and store state changes  
-  - reactive state that can be applied to the UI 
   - reactive entities at the base for both states and intents
   - clear DSL with few core directives, open to customisation
   - lightweight
@@ -54,8 +53,8 @@ data class CounterState(
 
 ### Define the Reducers
 
-A reducer is a pure function that takes in input the old state and returns a new state. 
-The ReducerFactory is where you want to define the state update logic. This is our idea and approach to implement the reducer, it is not a constraint of the library and it's up to the developers to choose how to define it.
+Reducers are pure functions that takes in input the old state and return a new state. In these functions is where you want to define the state update logic. 
+ReducerFactory is an abstraction on reducers that we're adopting to try to divide as much as possible the state update logic from the Model, using High Order Functions.
 
 ```kotlin
 interface CounterReducerFactory {
@@ -84,7 +83,7 @@ The model holds the representation of the state and updates it with the reducers
     this is the scope where you can update the state and call coroutines
 2. Use `on` to react to user intents
 3. You can update the state with `updateState` or use `sideEffect` to elaborate data from a repository and more
-4. Alternatively you can call `launchedEffect` to always execute code when the model is created
+4. More functions are present in the library to cover most common use-cases (eg: `launchedEffect` always execute code when the function `subscribeTo` of the Model is called)
 
 ```kotlin
 import com.gionni2d.mvi.foundation.Model
@@ -96,9 +95,11 @@ class CounterModel(
 ) : Model<CounterState, CounterIntent> {
     private val reducers: CounterReducerFactory = CounterReducerFactoryImpl()
     private val repository: CounterRepository = CounterRepository()
+    private val _uiEffect: MutableSharedFlow<CounterUIEffect> = MutableSharedFlow()
+    val uiEffect: Flow<CounterUIEffect> = _uiEffect.toSharedFlow()
     
     override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
-        store = store(),
+        initialState = CounterState(),
         intents = intents,
         coroutineScope = coroutineScope,
     ) {
@@ -108,6 +109,7 @@ class CounterModel(
 
         on<CounterIntent.SaveTotal>() sideEffect {
             repository.saveTotal(currentState.total)
+            _uiEffect.emit(CounterUIEffect.ShowTotalSavedNotification)
         }
     }
 }
@@ -121,7 +123,7 @@ import com.gionni2d.mvi.viewmodel.stateMachine
 class CounterModel : ViewModel(), Model<CounterState, CounterIntent> {
 
     override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
-        store = store(),
+        initialState = CounterState(),
         intents = intents
     ) {
         // 
