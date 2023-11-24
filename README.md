@@ -13,7 +13,7 @@ Because we simply couldn't find one that was easy to start working with, lightwe
 
 ## Getting started
 
-Here's a simple example to show off the fundaments on which the library is based on.\ 
+Here's a simple example to show off the fundaments on which the library is based on.\
 The user wants to insert a number, sum it with the previous inserted number (initial value is zero) and see the result.\
 Lastly saving the total sum with a network call.
 
@@ -100,7 +100,7 @@ class CounterModel(
     private val _uiEffect: MutableSharedFlow<CounterUIEffect> = MutableSharedFlow()
     val uiEffect: Flow<CounterUIEffect> = _uiEffect.toSharedFlow()
     
-    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
+    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachine(
         initialState = CounterState(),
         intents = intents,
         coroutineScope = coroutineScope,
@@ -124,7 +124,7 @@ import com.gionni2d.mvi.viewmodel.stateMachine
 
 class CounterModel : ViewModel(), Model<CounterState, CounterIntent> {
 
-    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachina(
+    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachine(
         initialState = CounterState(),
         intents = intents
     ) {
