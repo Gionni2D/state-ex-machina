@@ -37,7 +37,7 @@ sealed interface SumIntent : Intent {
     data class TypeFirstNumber(val firstNumber: Int) : SumIntent
     data class TypeSecondNumber(val secondNumber: Int) : SumIntent
     object Sum : SumIntent
-    object SaveTotal : SumIntent
+    object SaveSum : SumIntent
 }
 ```
 
@@ -118,7 +118,7 @@ class SumModel(
 
         on<SumIntent.Sum>() updateState reducers.updateSum
 
-        on<SumIntent.SaveTotal>() sideEffect {
+        on<SumIntent.SaveSum>() sideEffect {
             repository.saveSum(currentState.sum)
             _uiEffect.emit(SumUIEffect.ShowSumSavedNotification)
         }
