@@ -14,7 +14,7 @@ Because we simply couldn't find one that was easy to start working with, lightwe
 ## Getting started
 
 Here's a simple example to show off the fundaments on which the library is based on.\
-The user wants to insert a number, sum it with the previous inserted number (initial value is zero) and see the result.\
+The user wants to add two numbers and see the result of the sum.\
 Lastly saving the total sum with a network call.
 
 ### Define the dependencies
@@ -33,10 +33,11 @@ implementation("com.state-ex-machina:ext-view-model:<latest-version>")
 Intents represent user intentions, for example the intention to type a number.
 
 ```kotlin
-sealed interface CounterIntent : Intent {
-    data class TypeNumber(val number: Int) : CounterIntent
-    object Count : CounterIntent
-    object SaveTotal : CounterIntent
+sealed interface SumIntent : Intent {
+    data class TypeFirstNumber(val firstNumber: Int) : SumIntent
+    data class TypeSecondNumber(val secondNumber: Int) : SumIntent
+    object Sum : SumIntent
+    object SaveTotal : SumIntent
 }
 ```
 
@@ -45,9 +46,10 @@ sealed interface CounterIntent : Intent {
 State represents a photo of all the dynamic information needed to present the view and for the model to interact with the domain (and update itself)
 
 ```kotlin
-data class CounterState(
-    val currentCounter: Int = 0,
-    val total: Int = 0
+data class SumState(
+    val firstNumber: Int = 0,
+    val secondNumber: Int = 0,
+    val sum: Int = 0
 ) : State
 ```
 
@@ -57,20 +59,27 @@ Reducers are pure functions that takes in input the old state and return a new s
 ReducerFactory is an abstraction on reducers that we're adopting to try to divide as much as possible the state update logic from the Model, using High Order Functions.
 
 ```kotlin
-interface CounterReducerFactory {
-    fun updateCounter(c: Int): Reducer<CounterState>
-    val updateTotal: Reducer<CounterState>
+interface SumReducersFactory {
+    fun updateFirstNumber(n: Int): Reducer<SumState>
+    fun updateSecondNumber(n: Int): Reducer<SumState>
+    val updateSum: Reducer<SumState>
 }
 
-class CounterReducerFactoryImpl : CounterReducerFactory {
-    override fun updateCounter(
-        c: Int
-    ) = Reducer<CounterState> { s ->
-        s.copy(currentCounter = c)
+class SumReducersFactoryImpl : SumReducersFactory {
+    override fun updateFirstNumber(
+        n: Int
+    ) = Reducer<SumState> { s ->
+        s.copy(firstNumber = n)
     }
 
-    override val updateTotal = Reducer<CounterState> { s ->
-        s.copy(total = s.currentCounter + s.total)
+    override fun updateSecondNumber(
+        n: Int
+    ) = Reducer<SumState> { s ->
+        s.copy(secondNumber = n)
+    }
+
+    override val updateSum = Reducer<SumState> { s ->
+        s.copy(sum = s.firstNumber + s.secondNumber)
     }
 }
 ```
@@ -90,28 +99,28 @@ The model holds the representation of the state and updates it with the reducers
 ```kotlin
 import com.gionni2d.mvi.foundation.Model
 import com.gionni2d.mvi.dsl.stateMachine
-import com.gionni2d.mvi.dsl.updateState 
+import com.gionni2d.mvi.dsl.updateState
 
-class CounterModel(
+class SumModel(
     private val coroutineScope: CoroutineScope
-) : Model<CounterState, CounterIntent> {
-    private val reducers: CounterReducerFactory = CounterReducerFactoryImpl()
-    private val repository: CounterRepository = CounterRepository()
-    private val _uiEffect: MutableSharedFlow<CounterUIEffect> = MutableSharedFlow()
-    val uiEffect: Flow<CounterUIEffect> = _uiEffect.toSharedFlow()
+) : Model<SumState, SumIntent> {
+    private val reducers: SumReducersFactory = SumReducersFactoryImpl()
+    private val repository: SumRepository = SumRepository()
+    private val _uiEffect: MutableSharedFlow<SumUIEffect> = MutableSharedFlow()
+    val uiEffect: Flow<SumUIEffect> = _uiEffect.toSharedFlow()
     
-    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachine(
-        initialState = CounterState(),
+    override fun subscribeTo(intents: Flow<SumIntent>) = stateMachine(
+        initialState = SumState(),
         intents = intents,
         coroutineScope = coroutineScope,
     ) {
-        on<CounterIntent.TypeNumber>() updateState { reducers.updateCounter(it.number) }
+        on<SumIntent.TypeFirstNumber>() updateState { reducers.updateFirstNumber(it.firstNumber) }
 
-        on<CounterIntent.Count>() updateState reducers.updateTotal
+        on<SumIntent.Sum>() updateState reducers.updateSum
 
-        on<CounterIntent.SaveTotal>() sideEffect {
-            repository.saveTotal(currentState.total)
-            _uiEffect.emit(CounterUIEffect.ShowTotalSavedNotification)
+        on<SumIntent.SaveTotal>() sideEffect {
+            repository.saveSum(currentState.sum)
+            _uiEffect.emit(SumUIEffect.ShowSumSavedNotification)
         }
     }
 }
@@ -122,10 +131,10 @@ With the library extension for Android ViewModel we can utilize the `stateMachin
 ```kotlin
 import com.gionni2d.mvi.viewmodel.stateMachine
 
-class CounterModel : ViewModel(), Model<CounterState, CounterIntent> {
+class SumModel : ViewModel(), Model<SumState, SumIntent> {
 
-    override fun subscribeTo(intents: Flow<CounterIntent>) = stateMachine(
-        initialState = CounterState(),
+    override fun subscribeTo(intents: Flow<SumIntent>) = stateMachine(
+        initialState = SumState(),
         intents = intents
     ) {
         // 
@@ -138,21 +147,24 @@ class CounterModel : ViewModel(), Model<CounterState, CounterIntent> {
 
 ```kotlin
 @Composable
-fun CounterScreen(model: Model<CounterState, CounterIntent>) {
-    val (state, onIntent) = rememberMviComponent(model)
+fun SumScreen(model: Model<SumState, SumIntent>) {
+    val (stateFlow, onIntent) = rememberMviComponent(model)
+    val state by stateFlow.collectAsState()
 
-    CounterScreen(
+    SumScreen(
         state = state,
-        onTypeNumber = { CounterIntent.TypeNumber(it).let(onIntent) },
-        onCount = { CounterIntent.Count.let(onIntent) }
+        onTypeFirstNumber = { SumIntent.TypeFirstNumber(it).let(onIntent) },
+        onTypeSecondNumber = { SumIntent.TypeSecondNumber(it).let(onIntent) },
+        onSum = { SumIntent.Sum.let(onIntent) }
     )
 }
 
 @Composable
-private fun CounterScreen(
-    state: CounterState,
-    onTypeNumber: (Int) -> Unit,
-    onCount: () -> Unit,
+private fun SumScreen(
+    state: SumState,
+    onTypeFirstNumber: (Int) -> Unit,
+    onTypeSecondNumber: (Int) -> Unit,
+    onSum: () -> Unit,
 ) {
     // render UI using data from 'state' and wire intents to UI components actions
 }
