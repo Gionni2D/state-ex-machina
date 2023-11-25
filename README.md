@@ -155,7 +155,8 @@ fun SumScreen(model: Model<SumState, SumIntent>) {
         state = state,
         onTypeFirstNumber = { SumIntent.TypeFirstNumber(it).let(onIntent) },
         onTypeSecondNumber = { SumIntent.TypeSecondNumber(it).let(onIntent) },
-        onSum = { SumIntent.Sum.let(onIntent) }
+        onSum = { SumIntent.Sum.let(onIntent) },
+        onSaveSum = { SumIntent.SaveSum.let(onIntent) },
     )
 }
 
@@ -165,6 +166,7 @@ private fun SumScreen(
     onTypeFirstNumber: (Int) -> Unit,
     onTypeSecondNumber: (Int) -> Unit,
     onSum: () -> Unit,
+    onSaveSum: () -> Unit,
 ) {
     // render UI using data from 'state' and wire intents to UI components actions
 }
