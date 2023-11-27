@@ -34,8 +34,8 @@ Intents represent user intentions, for example the intention to type a number.
 
 ```kotlin
 sealed interface SumIntent : Intent {
-    data class TypeFirstNumber(val firstNumber: Int) : SumIntent
-    data class TypeSecondNumber(val secondNumber: Int) : SumIntent
+    data class TypeFirstNumber(val firstNumber: String) : SumIntent
+    data class TypeSecondNumber(val secondNumber: String) : SumIntent
     object Sum : SumIntent
     object SaveSum : SumIntent
 }
@@ -114,7 +114,9 @@ class SumModel(
         intents = intents,
         coroutineScope = coroutineScope,
     ) {
-        on<SumIntent.TypeFirstNumber>() updateState { reducers.updateFirstNumber(it.firstNumber) }
+        on<SumIntent.TypeFirstNumber>() updateState { reducers.updateFirstNumber(it.firstNumber.toInt()) }
+
+        on<SumIntent.TypeSecondNumber>() updateState { reducers.updateSecondNumber(it.secondNumber.toInt()) }
 
         on<SumIntent.Sum>() updateState reducers.updateSum
 
