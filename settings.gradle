@@ -16,3 +16,4 @@ rootProject.name = "Mvi"
 include ':app'
 include ':mvi'
 include ':mvi-compose'
+include ':mvi-viewmodel'
