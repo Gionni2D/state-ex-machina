@@ -25,10 +25,10 @@ fun <S : State, I : Intent> stateMachine(
     store: Store<S>,
     intents: Flow<I>,
     coroutineScope: CoroutineScope,
-    builder: IntentStateMachineScope<S, I>.() -> Unit
+    block: IntentStateMachineScope<S, I>.() -> Unit
 ): StateFlow<S> {
     StateMachineBuilder(store, intents)
-        .apply(builder)
+        .apply(block)
         .actionHandlers
         .merge()
         .launchIn(coroutineScope)
