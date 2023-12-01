@@ -10,9 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
-rootProject.name = "Mvi"
+rootProject.name = "state-ex-machina"
 include ':app'
 include ':mvi'
 include ':mvi-compose'

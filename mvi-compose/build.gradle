@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
@@ -44,4 +45,17 @@ dependencies {
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                setGroupId 'com.gionni2d.mvi'
+                setArtifactId 'ext-compose'
+                version '0.1.0'
+                artifact bundleReleaseAar
+            }
+        }
+    }
 }

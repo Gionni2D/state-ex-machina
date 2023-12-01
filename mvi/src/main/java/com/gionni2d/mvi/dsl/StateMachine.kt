@@ -18,8 +18,8 @@ fun <S : State, I : Intent> stateMachine(
     initialState: S,
     intents: Flow<I>,
     coroutineScope: CoroutineScope,
-    block: IntentStateMachineScope<S, I>.() -> Unit
-) = stateMachine(store(initialState), intents, coroutineScope, block)
+    builder: IntentStateMachineScope<S, I>.() -> Unit
+) = stateMachine(store(initialState), intents, coroutineScope, builder)
 
 fun <S : State, I : Intent> stateMachine(
     store: Store<S>,

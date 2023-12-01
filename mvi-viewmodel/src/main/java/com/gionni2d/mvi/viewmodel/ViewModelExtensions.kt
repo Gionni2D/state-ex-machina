@@ -13,21 +13,21 @@ import com.gionni2d.mvi.dsl.stateMachine
 fun <S : State, I : Intent> ViewModel.stateMachine(
     initialState: S,
     intents: Flow<I>,
-    block: IntentStateMachineScope<S, I>.() -> Unit
+    builder: IntentStateMachineScope<S, I>.() -> Unit
 ): StateFlow<S> = stateMachine(
     initialState = initialState,
     intents = intents,
     coroutineScope = viewModelScope,
-    block = block,
+    builder = builder,
 )
 
 fun <S : State, I : Intent> ViewModel.stateMachine(
     store: Store<S>,
     intents: Flow<I>,
-    block: IntentStateMachineScope<S, I>.() -> Unit
+    builder: IntentStateMachineScope<S, I>.() -> Unit
 ): StateFlow<S> = stateMachine(
     store = store,
     intents = intents,
     coroutineScope = viewModelScope,
-    block = block,
+    builder = builder,
 )
