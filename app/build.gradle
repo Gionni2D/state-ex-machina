@@ -67,8 +67,9 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Mvi lib
-    implementation project(':mvi')
+    implementation "com.gionni2d.mvi:foundation:0.1.0"
     implementation project(':mvi-compose')
+    implementation project(':mvi-viewmodel')
 
     testImplementation "junit:junit:$junit_version"
 
