@@ -4,6 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
+ext.artifactId = 'foundation'
+apply from: "$rootDir/publish.gradle"
+
 android {
     compileSdk 32
 
@@ -38,17 +41,4 @@ dependencies {
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                setGroupId 'com.gionni2d.mvi'
-                setArtifactId 'foundation'
-                version '0.1.0'
-                artifact bundleReleaseAar
-            }
-        }
-    }
 }

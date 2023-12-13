@@ -4,6 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
+ext.artifactId = 'ext-viewmodel'
+apply from: "$rootDir/publish.gradle"
+
 android {
     compileSdk 32
 
@@ -39,17 +42,4 @@ dependencies {
     
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                setGroupId 'com.gionni2d.mvi'
-                setArtifactId 'ext-viewmodel'
-                version '0.1.0'
-                artifact bundleReleaseAar
-            }
-        }
-    }
 }

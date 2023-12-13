@@ -1,0 +1,15 @@
+def moduleId  = ext.artifactId
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId 'com.gionni2d.mvi'
+            artifactId moduleId
+            version '0.1.0'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}
