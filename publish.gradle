@@ -3,7 +3,7 @@ def moduleId  = ext.artifactId
 publishing {
     publications {
         aar(MavenPublication) {
-            groupId 'com.gionni2d.mvi'
+            groupId 'state.ex.machina'
             artifactId moduleId
             version '0.1.0'
 

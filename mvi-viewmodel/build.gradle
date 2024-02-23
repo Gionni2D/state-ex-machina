@@ -31,7 +31,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    namespace 'com.gionni2d.mvi.viewmodel'
+    namespace 'state.ex.machina.viewmodel'
 }
 
 dependencies {
