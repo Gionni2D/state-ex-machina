@@ -1,3 +1,5 @@
+import state.ex.machina.Build
+
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
@@ -8,11 +10,11 @@ ext.artifactId = 'ext-compose'
 apply from: "$rootDir/publish.gradle"
 
 android {
-    compileSdk 32
+    compileSdk Build.ANDROID_SDK_COMPILE
 
     defaultConfig {
-        minSdk 23
-        targetSdk 32
+        minSdk Build.ANDROID_SDK_MIN
+        targetSdk Build.ANDROID_SDK_TARGET
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

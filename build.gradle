@@ -21,6 +21,6 @@ plugins {
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
