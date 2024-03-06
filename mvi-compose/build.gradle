@@ -1,4 +1,5 @@
 import state.ex.machina.Build
+import state.ex.machina.Publish
 
 plugins {
     id 'com.android.library'
@@ -6,7 +7,7 @@ plugins {
     id 'maven-publish'
 }
 
-ext.artifactId = 'ext-compose'
+ext.artifactId = Publish.ARTIFACT_ID_COMPOSE
 apply from: "$rootDir/publish.gradle"
 
 android {

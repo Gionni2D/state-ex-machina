@@ -1,11 +1,14 @@
+import state.ex.machina.Publish
+
 def moduleId  = ext.artifactId
+def pomData = Publish.pomData.get(moduleId)
 
 publishing {
     publications {
         aar(MavenPublication) {
-            groupId 'state.ex.machina'
+            groupId Publish.GROUP_ID
             artifactId moduleId
-            version '0.1.0'
+            version Publish.VERSION
 
             afterEvaluate {
                 from components.release

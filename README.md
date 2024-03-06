@@ -25,18 +25,18 @@ Lastly saving the total sum with a network call.
 dependencyResolutionManagement {
     repositories {
         // ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 
 // build.gradle
 
 // MVI foundation
-implementation("state.ex.machina:foundation:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-foundation:<latest-version>")
 // Jetpack Compose MVI extensions
-implementation("state.ex.machina:ext-compose:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-ext-compose:<latest-version>")
 // Android ViewModel MVI extensions
-implementation("state.ex.machina:ext-viewmodel:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-ext-viewmodel:<latest-version>")
 ```
 
 ### Define the Intents
