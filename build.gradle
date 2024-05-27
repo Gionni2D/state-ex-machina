@@ -24,3 +24,13 @@ plugins {
 tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
+
+tasks.register("createMavenCentralRelease", Zip) {
+    group "publishing"
+    dependsOn(clean)
+
+    from "$buildDir/repo"
+    exclude '**/maven-metadata*'
+    destinationDirectory = buildDir
+    archiveFileName = "repo.zip"
+}
