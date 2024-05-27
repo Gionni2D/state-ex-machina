@@ -4,7 +4,6 @@ import state.ex.machina.Publish
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
 }
 
 ext.artifactId = Publish.ARTIFACT_ID_COMPOSE
@@ -41,6 +40,11 @@ android {
         kotlinCompilerExtensionVersion compose_version
     }
     namespace 'state.ex.machina.compose'
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {

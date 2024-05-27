@@ -4,7 +4,6 @@ import state.ex.machina.Publish
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
 }
 
 ext.artifactId = Publish.ARTIFACT_ID_VIEWMODEL
@@ -35,6 +34,11 @@ android {
         jvmTarget = '1.8'
     }
     namespace 'state.ex.machina.viewmodel'
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {

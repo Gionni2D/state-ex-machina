@@ -1,5 +1,7 @@
 import state.ex.machina.Publish
 
+apply plugin: 'maven-publish'
+
 def moduleId  = ext.artifactId
 def pomData = Publish.pomData.get(moduleId)
 
