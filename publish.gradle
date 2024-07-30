@@ -1,0 +1,71 @@
+import state.ex.machina.Publish
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+def moduleId  = ext.artifactId
+def pomData = Publish.pomData.get(moduleId)
+def localRepoDirName = 'repo'
+def localRepo = layout.buildDirectory.dir(localRepoDirName)
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId Publish.GROUP_ID
+            artifactId moduleId
+            version Publish.VERSION
+
+            afterEvaluate {
+                from components.release
+            }
+
+            pom {
+                name = pomData.name
+                description = pomData.description
+                url = 'https://github.com/Gionni2D/state-ex-machina'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://raw.githubusercontent.com/Gionni2D/state-ex-machina/master/LICENSE'
+                    }
+                }
+                scm {
+                    connection = 'scm:git@github.com:gionni2d/state-ex-machina.git'
+                    url = 'https://github.com/Gionni2D/state-ex-machina.git'
+                }
+                developers {
+                    developer {
+                        id = 'Gionni2D'
+                        name = 'Giovanni Di Donato'
+                        email = 'gionni2d@gmail.com'
+                    }
+                    developer {
+                        id = 'massipetro'
+                        name = 'Massimo Petrogalli'
+                        email = 'maxpetrogalli@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = localRepo
+        }
+    }
+}
+
+signing {
+    sign publishing.publications
+}
+
+tasks.register("copyRepo", Copy) {
+    dependsOn(clean, publishReleasePublicationToMavenRepository)
+
+    from localRepo.get().asFile
+    into "${rootProject.buildDir}/$localRepoDirName"
+}
+
+rootProject.tasks.named("createMavenCentralRelease").configure {
+    dependsOn(copyRepo)
+}

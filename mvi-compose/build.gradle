@@ -1,15 +1,20 @@
+import state.ex.machina.Build
+import state.ex.machina.Publish
+
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
 }
 
+ext.artifactId = Publish.ARTIFACT_ID_COMPOSE
+apply from: "$rootDir/publish.gradle"
+
 android {
-    compileSdk 32
+    compileSdk Build.ANDROID_SDK_COMPILE
 
     defaultConfig {
-        minSdk 23
-        targetSdk 32
+        minSdk Build.ANDROID_SDK_MIN
+        targetSdk Build.ANDROID_SDK_TARGET
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -34,7 +39,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
-    namespace 'com.gionni2d.mvi.compose'
+    namespace 'state.ex.machina.compose'
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -45,17 +55,4 @@ dependencies {
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                setGroupId 'com.gionni2d.mvi'
-                setArtifactId 'ext-compose'
-                version '0.1.0'
-                artifact bundleReleaseAar
-            }
-        }
-    }
 }

@@ -19,24 +19,24 @@ Lastly saving the total sum with a network call.
 
 ### Define the dependencies
 
-```kotlin   
+```groovy
 // settings.gradle
 
 dependencyResolutionManagement {
     repositories {
         // ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 
 // build.gradle
 
 // MVI foundation
-implementation("com.gionni2d.mvi:foundation:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-foundation:<latest-version>")
 // Jetpack Compose MVI extensions
-implementation("com.gionni2d.mvi:ext-compose:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-ext-compose:<latest-version>")
 // Android ViewModel MVI extensions
-implementation("com.gionni2d.mvi:ext-viewmodel:<latest-version>")
+implementation("io.github.gionni2d:state-ex-machina-ext-viewmodel:<latest-version>")
 ```
 
 ### Define the Intents
@@ -108,9 +108,9 @@ The model holds the representation of the state and updates it with the reducers
 **Model is immutable, every function or variable declared inside its scope should only be called in `subscribeTo`**
 
 ```kotlin
-import com.gionni2d.mvi.foundation.Model
-import com.gionni2d.mvi.dsl.stateMachine
-import com.gionni2d.mvi.dsl.updateState
+import state.ex.machina.foundation.Model
+import state.ex.machina.dsl.stateMachine
+import state.ex.machina.dsl.updateState
 
 class SumModel(
     private val coroutineScope: CoroutineScope
@@ -142,7 +142,7 @@ class SumModel(
 With the library extension for Android ViewModel we can utilize the `stateMachine` that calls for `viewModelScope` as coroutine scope.
 
 ```kotlin
-import com.gionni2d.mvi.viewmodel.stateMachine
+import state.ex.machina.viewmodel.stateMachine
 
 class SumModel : ViewModel(), Model<SumState, SumIntent> {
 
