@@ -1,20 +1,18 @@
-import state.ex.machina.Build
 import state.ex.machina.Publish
 
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
 }
 
 ext.artifactId = Publish.ARTIFACT_ID_FOUNDATION
 apply from: "$rootDir/publish.gradle"
 
 android {
-    compileSdk Build.ANDROID_SDK_COMPILE
+    compileSdk libs.versions.android.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk Build.ANDROID_SDK_MIN
-        targetSdk Build.ANDROID_SDK_TARGET
+        minSdk libs.versions.android.minSdk.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,10 +40,10 @@ android {
 }
 
 dependencies {
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version")
+    api libs.kotlinx.coroutines
 
-    testImplementation "junit:junit:$junit_version"
+    testImplementation libs.junit
 
-    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation libs.androidx.test.junit
+    androidTestImplementation libs.androidx.espresso
 }

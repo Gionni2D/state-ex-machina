@@ -1,20 +1,18 @@
-import state.ex.machina.Build
 import state.ex.machina.Publish
 
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
 }
 
 ext.artifactId = Publish.ARTIFACT_ID_VIEWMODEL
 apply from: "$rootDir/publish.gradle"
 
 android {
-    compileSdk Build.ANDROID_SDK_COMPILE
+    compileSdk libs.versions.android.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdk Build.ANDROID_SDK_MIN
-        targetSdk Build.ANDROID_SDK_TARGET
+        minSdk libs.versions.android.minSdk.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -43,10 +41,10 @@ android {
 
 dependencies {
     implementation project(":mvi")
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation libs.androidx.lifecycle.viewmodel
 
-    testImplementation "junit:junit:4.13.2"
-    
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    testImplementation libs.junit
+
+    androidTestImplementation libs.androidx.test.junit
+    androidTestImplementation libs.androidx.espresso
 }
