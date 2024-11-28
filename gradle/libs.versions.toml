@@ -3,7 +3,7 @@ agp = "8.5.2"
 kotlin = "2.0.0"
 android-minSdk = "23"
 android-compileSdk = "34"
-androidx-lifecycle-viewmodel = "2.5.1"
+androidx-lifecycle-viewmodel = "2.8.7"
 compose = "1.1.1"
 kotlinx-coroutines = "1.7.3"
 # Test
@@ -13,7 +13,7 @@ androidx-espresso = "3.6.1"
 
 [libraries]
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle-viewmodel" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle-viewmodel" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 # Test
 junit = { module = "junit:junit", version.ref = "junit" }
