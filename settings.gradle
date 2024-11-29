@@ -15,5 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "state-ex-machina"
 include ':state-ex-machina-foundation'
-// include ':mvi-compose'
+include ':state-ex-machina-ext-compose'
 include ':state-ex-machina-ext-viewmodel'

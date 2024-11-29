@@ -1,10 +1,12 @@
 [versions]
+# Build
 agp = "8.5.2"
 kotlin = "2.0.0"
 android-minSdk = "23"
 android-compileSdk = "34"
+# Dependencies
 androidx-lifecycle-viewmodel = "2.8.7"
-compose = "1.1.1"
+compose = "1.6.11"
 kotlinx-coroutines = "1.7.3"
 # Test
 junit = "4.13.2"
@@ -12,7 +14,7 @@ androidx-junit = "1.2.1"
 androidx-espresso = "3.6.1"
 
 [libraries]
-androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle-viewmodel" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 # Test
@@ -23,4 +25,5 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
