@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import state.ex.machina.Publish
 
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinMultiplatform)
 }
 
-ext["artifactId"] = Publish.ARTIFACT_ID_FOUNDATION
+ext["pomName"] = "State Ex Machina - foundation"
+ext["pomDescription"] = "MVI-like library written in Kotlin for Android"
 apply(from = "$rootDir/publish.gradle")
 
 kotlin {

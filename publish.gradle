@@ -1,21 +1,19 @@
-import state.ex.machina.Publish
-
 apply plugin: 'maven-publish'
 
-def moduleId  = ext.artifactId
-def pomData = Publish.pomData.get(moduleId)
-def localRepoDirName = 'repo'
+def pomName = ext.pomName
+def pomDescription = ext.pomDescription
+
+def localRepoDirName = 'artifacts'
 def localRepo = layout.buildDirectory.dir(localRepoDirName)
 
 publishing {
     publications.withType(MavenPublication) {
-        groupId Publish.GROUP_ID
-        artifactId moduleId
-        version Publish.VERSION
+        groupId "io.github.gionni2d"
+        version "0.1.0"
 
         pom {
-            name = pomData.name
-            description = pomData.description
+            name = pomName
+            description = pomDescription
             url = 'https://github.com/Gionni2D/state-ex-machina'
             licenses {
                 license {

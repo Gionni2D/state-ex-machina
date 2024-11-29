@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import state.ex.machina.Publish
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -8,7 +7,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-ext["artifactId"] = Publish.ARTIFACT_ID_COMPOSE
+ext["pomName"] = "State Ex Machina - Compose extensions"
+ext["pomDescription"] = "Some utilities to better fit Jetpack Compose with State Ex Machina"
 apply(from = "$rootDir/publish.gradle")
 
 kotlin {

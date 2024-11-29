@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import state.ex.machina.Publish
 
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinMultiplatform)
 }
 
-ext["artifactId"] = Publish.ARTIFACT_ID_VIEWMODEL
+ext["pomName"] = "State Ex Machina - View Model extensions"
+ext["pomDescription"] = "Some utilities to better fit Android View Model with State Ex Machina"
 apply(from = "$rootDir/publish.gradle")
 
 kotlin {

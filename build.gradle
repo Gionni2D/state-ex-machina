@@ -12,8 +12,8 @@ tasks.register("createMavenCentralRelease", Zip) {
     group "publishing"
     dependsOn(clean)
 
-    from "$buildDir/repo"
+    from "$buildDir/artifacts"
     exclude '**/maven-metadata*'
     destinationDirectory = buildDir
-    archiveFileName = "repo.zip"
+    archiveFileName = "artifacts.zip"
 }
