@@ -1,7 +1,7 @@
 package state.ex.machina.dsl
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -57,7 +57,7 @@ class StateMachineBuilder<S : State, I : Intent>(
             reducerBuilder: (D) -> Reducer<S>
         ) = sideEffect { updateState(reducerBuilder(it)) }
 
-        @OptIn(FlowPreview::class)
+        @OptIn(ExperimentalCoroutinesApi::class)
         override fun sideEffect(
             block: suspend SideEffectScope<S>.(D) -> Unit
         ) = rawSideEffect { flow ->
