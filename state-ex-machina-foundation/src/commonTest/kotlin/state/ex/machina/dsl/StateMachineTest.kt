@@ -1,8 +1,10 @@
 package state.ex.machina.dsl
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -22,26 +24,58 @@ class StateMachineTest {
     private sealed interface TestIntent : Intent {
         data object Increment : TestIntent
         data object Decrement : TestIntent
+        data object Load: TestIntent
+        data class Store(val valueToAdd: Int): TestIntent
+    }
+
+    class TestRepository {
+        var counter: Int = 42
+
+        suspend fun loadCounter(): Int {
+            delay(100)
+            return counter
+        }
+
+        suspend fun storeCounter(counter: Int) {
+            delay(100)
+            this.counter = counter
+        }
     }
 
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-    private fun TestScope.testStateMachine(
+    private fun TestScope.initTest(
         initialState: TestState,
         intents: Flow<TestIntent>
-    ) = stateMachine(
-        initialState = initialState,
-        intents = intents,
-        coroutineScope = backgroundScope
-    ) {
-        on<TestIntent.Increment>() updateState { intent ->
-            Reducer { currentState ->
-                currentState.copy(counter = currentState.counter + 1)
-            }
-        }
+    ): Pair<StateFlow<TestState>, TestRepository> {
+        val repository = TestRepository()
 
-        on<TestIntent.Decrement>() updateState Reducer { currentState ->
-            currentState.copy(counter = currentState.counter - 1)
-        }
+        return stateMachine(
+            initialState = initialState,
+            intents = intents,
+            coroutineScope = backgroundScope
+        ) {
+            on<TestIntent.Increment>() updateState { intent ->
+                Reducer { state ->
+                    state.copy(counter = state.counter + 1)
+                }
+            }
+
+            on<TestIntent.Decrement>() updateState Reducer { state ->
+                state.copy(counter = state.counter - 1)
+            }
+
+            on<TestIntent.Load>() sideEffect {
+                val loadedCounter = repository.loadCounter()
+                updateState { state ->
+                    state.copy(counter = loadedCounter)
+                }
+            }
+
+            on<TestIntent.Store>() sideEffect { intent ->
+                val counterToStore = currentState.counter + intent.valueToAdd
+                repository.storeCounter(counterToStore)
+            }
+        } to repository
     }
 
 
@@ -65,7 +99,7 @@ class StateMachineTest {
             // Given
             val intents = MutableSharedFlow<TestIntent>()
             val initialState = TestState(counter = 0)
-            val stateMachine = testStateMachine(
+            val (stateMachine) = initTest(
                 initialState = initialState,
                 intents = intents
             )
@@ -91,7 +125,7 @@ class StateMachineTest {
             // Given
             val intents = MutableSharedFlow<TestIntent>()
             val initialState = TestState(counter = 0)
-            val stateMachine = testStateMachine(
+            val (stateMachine) = initTest(
                 initialState = initialState,
                 intents = intents,
             )
@@ -105,5 +139,39 @@ class StateMachineTest {
             val (_, expected) = vector.last()
             assertEquals(expected, stateMachine.value.counter)
         }
+    }
+
+    @Test
+    fun `test side effect`() = runTest(UnconfinedTestDispatcher()) {
+        // Given
+        val intents = MutableSharedFlow<TestIntent>()
+        val initialState = TestState(counter = 0)
+        val (stateMachine, repository) = initTest(
+            initialState = initialState,
+            intents = intents,
+        )
+
+        // When
+        val repositoryInit = repository.counter
+        val stateInit = stateMachine.value
+
+        intents.emit(TestIntent.Load)
+        val stateAfterLoadIntent = stateMachine.value
+        delay(100)
+        val stateAfterLoadEnd = stateMachine.value
+
+        intents.emit(TestIntent.Store(valueToAdd = 10))
+        val stateAfterStoreIntent = stateMachine.value
+        delay(100)
+        val stateAfterStoreEnd = stateMachine.value
+
+        // Then
+        assertEquals(0, stateInit.counter)
+        assertEquals(0, stateAfterLoadIntent.counter)
+        assertEquals(42, stateAfterLoadEnd.counter)
+        assertEquals(42, stateAfterStoreIntent.counter)
+        assertEquals(42, stateAfterStoreEnd.counter)
+        assertEquals(42, repositoryInit)
+        assertEquals(52, repository.counter)
     }
 }
