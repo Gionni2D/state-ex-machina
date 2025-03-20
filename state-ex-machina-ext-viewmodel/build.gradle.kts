@@ -7,7 +7,7 @@ plugins {
 }
 
 ext["pomName"] = "State Ex Machina - View Model extensions"
-ext["pomDescription"] = "Some utilities to better fit Android View Model with State Ex Machina"
+ext["pomDescription"] = "Some utilities to better fit AndroidX View Model with State Ex Machina"
 apply(from = "$rootDir/publish.gradle")
 
 kotlin {

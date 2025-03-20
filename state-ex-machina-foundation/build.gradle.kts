@@ -7,7 +7,7 @@ plugins {
 }
 
 ext["pomName"] = "State Ex Machina - foundation"
-ext["pomDescription"] = "MVI-like library written in Kotlin for Android"
+ext["pomDescription"] = "MVI-like library written in Kotlin Multiplatform"
 apply(from = "$rootDir/publish.gradle")
 
 kotlin {
