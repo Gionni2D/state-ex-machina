@@ -12,14 +12,6 @@ import state.ex.machina.foundation.Intent
 import state.ex.machina.foundation.Reducer
 import state.ex.machina.foundation.State
 import state.ex.machina.foundation.Store
-import state.ex.machina.foundation.store
-
-fun <S : State, I : Intent> stateMachine(
-    initialState: S,
-    intents: Flow<I>,
-    coroutineScope: CoroutineScope,
-    builder: IntentStateMachineScope<S, I>.() -> Unit
-) = stateMachine(store(initialState), intents, coroutineScope, builder)
 
 fun <S : State, I : Intent> stateMachine(
     store: Store<S>,

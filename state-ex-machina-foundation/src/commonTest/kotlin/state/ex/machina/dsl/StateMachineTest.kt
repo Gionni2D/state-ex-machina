@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import state.ex.machina.foundation.Intent
 import state.ex.machina.foundation.Reducer
 import state.ex.machina.foundation.State
+import state.ex.machina.foundation.store
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -50,7 +51,7 @@ class StateMachineTest {
         val repository = TestRepository()
 
         return stateMachine(
-            initialState = initialState,
+            store = store(initialState),
             intents = intents,
             coroutineScope = backgroundScope
         ) {
