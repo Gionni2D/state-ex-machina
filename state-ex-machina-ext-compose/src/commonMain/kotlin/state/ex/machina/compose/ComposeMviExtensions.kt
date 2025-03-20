@@ -24,16 +24,16 @@ private fun <I : Intent> intentsFlowForCompose(
     return intentCallback to intentFlow
 }
 
-data class MviComponents<S : State, I : Intent>(
+data class StateMachineComposeContract<S : State, I : Intent>(
     val state: S,
     val onIntent: (I) -> Unit
 )
 
 @Composable
-fun <S : State, I : Intent> rememberMviComponent(
+fun <S : State, I : Intent> rememberStateMachine(
     model: Model<S, I>,
     scope: CoroutineScope = rememberCoroutineScope()
-): MviComponents<S, I> {
+): StateMachineComposeContract<S, I> {
     val (stateFlow, onIntent) = remember {
         val (onIntent, intentFlow) = intentsFlowForCompose<I>(scope)
         val stateFlow = model.subscribeTo(intentFlow)
@@ -41,7 +41,7 @@ fun <S : State, I : Intent> rememberMviComponent(
     }
     val state = stateFlow.collectAsState()
 
-    return MviComponents(
+    return StateMachineComposeContract(
         state = state.value,
         onIntent = onIntent
     )

@@ -168,8 +168,7 @@ class SumModel : ViewModel(), Model<SumState, SumIntent> {
 ```kotlin
 @Composable
 fun SumScreen(model: Model<SumState, SumIntent>) {
-    val (stateFlow, onIntent) = rememberMviComponent(model)
-    val state by stateFlow.collectAsState()
+    val (state, onIntent) = rememberStateMachine(model)
 
     SumScreen(
         state = state,
