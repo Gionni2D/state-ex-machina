@@ -1,11 +1,16 @@
 package state.ex.machina.dsl
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import state.ex.machina.extension.ReducerMapper
 import state.ex.machina.extension.concatReducers
+import state.ex.machina.foundation.Effect
 import state.ex.machina.foundation.Intent
 import state.ex.machina.foundation.Reducer
 import state.ex.machina.foundation.State
@@ -21,7 +26,7 @@ interface StateMachineScope<S : State> {
 abstract class IntentStateMachineScope<S : State, I : Intent>(
     val intents: Flow<I>
 ) : StateMachineScope<S> {
-    inline fun <reified I2> on() = on(intents.filterIsInstance<I2>())
+    inline fun <reified I2 : I> on() = on(intents.filterIsInstance<I2>())
 
     fun on(predicate: (I) -> Boolean) = on(intents.filter(predicate))
 }
@@ -39,6 +44,21 @@ interface SideEffectScope<S : State> {
 
     fun updateState(reducer: Reducer<S>): S
 }
+
+abstract class EffectReceiverScope<E : Effect> {
+    abstract fun on(
+        predicate: suspend (E) -> Boolean,
+        handler: suspend (E) -> Unit
+    )
+
+    inline fun <reified E2 : E> on(
+        noinline handler: suspend (E2) -> Unit
+    ) = on(
+        predicate = { it is E2 },
+        handler = { handler(it as E2) }
+    )
+}
+
 
 //////////////////////////
 //// Scope extensions ////
