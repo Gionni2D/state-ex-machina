@@ -4,8 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import state.ex.machina.extension.ReducerMapper
 import state.ex.machina.extension.concatReducers
+import state.ex.machina.foundation.Effect
 import state.ex.machina.foundation.Intent
 import state.ex.machina.foundation.Reducer
 import state.ex.machina.foundation.State
@@ -38,6 +40,25 @@ interface SideEffectScope<S : State> {
     val currentState: S
 
     fun updateState(reducer: Reducer<S>): S
+}
+
+class EffectReceiverScope<E : Effect>(
+    val effects: Flow<E> // TODO: find a way to make it private
+) {
+    val effectHandlers = mutableListOf<Flow<*>>() // TODO: find a way to make it non-mutable
+
+    inline fun <reified E2> on(
+        noinline handler: suspend (E2) -> Unit
+    ) {
+        effectHandlers += effects.filterIsInstance<E2>().onEach(handler)
+    }
+
+    fun on(
+        predicate: suspend (E) -> Boolean,
+        handler: suspend (E) -> Unit
+    ) {
+        effectHandlers += effects.filter(predicate).onEach(handler)
+    }
 }
 
 //////////////////////////
