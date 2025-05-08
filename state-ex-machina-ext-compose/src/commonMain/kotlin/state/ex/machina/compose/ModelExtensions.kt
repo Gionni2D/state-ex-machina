@@ -24,10 +24,13 @@ private fun <I : Intent> intentsFlowForCompose(
     return intentCallback to intentFlow
 }
 
-data class StateMachineComposeContract<S : State, I : Intent>(
-    val state: S,
+interface StateMachineComposeContract<S : State, I : Intent> {
+    val state: S
     val onIntent: (I) -> Unit
-)
+
+    operator fun component1(): S = state
+    operator fun component2(): (I) -> Unit = onIntent
+}
 
 @Composable
 fun <S : State, I : Intent> rememberStateMachine(
@@ -41,8 +44,8 @@ fun <S : State, I : Intent> rememberStateMachine(
     }
     val state = stateFlow.collectAsState()
 
-    return StateMachineComposeContract(
-        state = state.value,
-        onIntent = onIntent
-    )
+    return object : StateMachineComposeContract<S, I> {
+        override val state: S = state.value
+        override val onIntent = onIntent
+    }
 }
