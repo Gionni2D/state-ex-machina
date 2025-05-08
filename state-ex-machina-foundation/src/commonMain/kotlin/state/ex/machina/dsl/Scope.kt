@@ -23,7 +23,7 @@ abstract class IntentStateMachineScope<S : State, I : Intent>(
 ) : StateMachineScope<S> {
     inline fun <reified I2> on() = on(intents.filterIsInstance<I2>())
 
-    fun on(intentFilterPredicate: (I) -> Boolean) = on(intents.filter(intentFilterPredicate))
+    fun on(predicate: (I) -> Boolean) = on(intents.filter(predicate))
 }
 
 interface ActionScope<S : State, D> {
