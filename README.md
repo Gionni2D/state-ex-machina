@@ -1,9 +1,10 @@
 # State Ex Machina
 
-State Ex Machina is a MVI-like library written in Kotlin for Android.
+State Ex Machina is a MVI-like library written in Kotlin Multiplatform.
 
 **Why do we need another MVI library?**\
-Because we simply couldn't find one that was easy to start working with, lightweight and that would cover enough use cases.
+Because we simply couldn't find one that was easy to start working with, lightweight and that would
+cover enough use cases.
 
 **Core concepts**
   - state machine built on kotlin ```Flow``` to handle and store state changes  
@@ -35,7 +36,7 @@ dependencyResolutionManagement {
 implementation("io.github.gionni2d:state-ex-machina-foundation:<latest-version>")
 // Jetpack Compose MVI extensions
 implementation("io.github.gionni2d:state-ex-machina-ext-compose:<latest-version>")
-// Android ViewModel MVI extensions
+// AndroidX ViewModel MVI extensions
 implementation("io.github.gionni2d:state-ex-machina-ext-viewmodel:<latest-version>")
 ```
 
@@ -54,7 +55,8 @@ sealed interface SumIntent : Intent {
 
 ### Define the State
 
-State represents a photo of all the dynamic information needed to present the view and for the model to interact with the domain (and update itself)
+State represents a photo of all the dynamic information needed to present the view and for the model
+to interact with the domain (and update itself)
 
 ```kotlin
 data class SumState(
@@ -66,8 +68,11 @@ data class SumState(
 
 ### Define the Reducers
 
-Reducers are pure functions that takes in input the old state and return a new state. In these functions is where you want to define the state update logic. 
-ReducerFactory is an abstraction on reducers that we're adopting to try to divide as much as possible the state update logic from the Model, using High Order Functions.
+Reducers are pure functions that takes in input the old state and return a new state. In these
+functions is where you want to define the state update logic. 
+
+ReducerFactory is an abstraction on reducers that we're adopting to try to divide as much as
+possible the state update logic from the Model, using High Order Functions.
 
 ```kotlin
 interface SumReducersFactory {
@@ -97,7 +102,8 @@ class SumReducersFactoryImpl : SumReducersFactory {
 
 ### Create the Model
 
-The model holds the representation of the state and updates it with the reducers, it's the layer responsible for most of the business logic.
+The model holds the representation of the state and updates it with the reducers, it's the layer
+responsible for most of the business logic.
 
 1. Create a model that implements the MVI `Model` and override the function `subscribeTo`,
     this is the scope where you can update the state and call coroutines
@@ -139,7 +145,8 @@ class SumModel(
 }
 ```
 
-With the library extension for Android ViewModel we can utilize the `stateMachine` that calls for `viewModelScope` as coroutine scope.
+With the library extension for ViewModel we can utilize the `stateMachine` that calls
+for `viewModelScope` as coroutine scope.
 
 ```kotlin
 import state.ex.machina.viewmodel.stateMachine

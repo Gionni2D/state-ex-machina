@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="state-ex-machina-ext-compose-jvm">
+    <output-path>$PROJECT_DIR$/state-ex-machina-ext-compose/build/libs</output-path>
+    <root id="archive" name="state-ex-machina-ext-compose-jvm.jar">
+      <element id="module-output" name="state-ex-machina.state-ex-machina-ext-compose.jvmMain" />
+    </root>
+  </artifact>
+</component>
