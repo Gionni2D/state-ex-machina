@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Kotlin Multiplatform** support (jvm, android, ios, linux)
 
+### Changed
+
+- *Foundation* - rename `IntentStateMachineScope.on` parameter `intentFilterPredicate`in `predicate
+- *Compose extension* - rename `rememberMviComponent` in `rememberStateMachine`
+
+### Removed
+
+- *Foundation* - `Flow.applyReducer` extensions
+- *Foundation* - `stateMachine` overload with `initialState` parameter
+- *ViewModel extension* - `stateMachine` overload with `initialState` parameter
+
 ## [0.1.0] - 2024-07-30
 
 ### Added

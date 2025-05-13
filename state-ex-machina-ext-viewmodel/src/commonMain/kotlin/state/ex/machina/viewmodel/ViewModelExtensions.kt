@@ -11,17 +11,6 @@ import state.ex.machina.foundation.State
 import state.ex.machina.foundation.Store
 
 fun <S : State, I : Intent> ViewModel.stateMachine(
-    initialState: S,
-    intents: Flow<I>,
-    builder: IntentStateMachineScope<S, I>.() -> Unit
-): StateFlow<S> = stateMachine(
-    initialState = initialState,
-    intents = intents,
-    coroutineScope = viewModelScope,
-    builder = builder,
-)
-
-fun <S : State, I : Intent> ViewModel.stateMachine(
     store: Store<S>,
     intents: Flow<I>,
     builder: IntentStateMachineScope<S, I>.() -> Unit

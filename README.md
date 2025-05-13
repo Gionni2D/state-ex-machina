@@ -115,6 +115,7 @@ responsible for most of the business logic.
 
 ```kotlin
 import state.ex.machina.foundation.Model
+import state.ex.machina.foundation.store
 import state.ex.machina.dsl.stateMachine
 import state.ex.machina.dsl.updateState
 
@@ -127,7 +128,7 @@ class SumModel(
     val uiEffect: Flow<SumUIEffect> = _uiEffect.toSharedFlow()
     
     override fun subscribeTo(intents: Flow<SumIntent>) = stateMachine(
-        initialState = SumState(),
+        store = store(SumState()),
         intents = intents,
         coroutineScope = coroutineScope,
     ) {
@@ -149,12 +150,13 @@ With the library extension for ViewModel we can utilize the `stateMachine` that 
 for `viewModelScope` as coroutine scope.
 
 ```kotlin
+import state.ex.machina.foundation.store
 import state.ex.machina.viewmodel.stateMachine
 
 class SumModel : ViewModel(), Model<SumState, SumIntent> {
 
     override fun subscribeTo(intents: Flow<SumIntent>) = stateMachine(
-        initialState = SumState(),
+        store = store(SumState()),
         intents = intents
     ) {
         // 
@@ -168,8 +170,7 @@ class SumModel : ViewModel(), Model<SumState, SumIntent> {
 ```kotlin
 @Composable
 fun SumScreen(model: Model<SumState, SumIntent>) {
-    val (stateFlow, onIntent) = rememberMviComponent(model)
-    val state by stateFlow.collectAsState()
+    val (state, onIntent) = rememberStateMachine(model)
 
     SumScreen(
         state = state,
