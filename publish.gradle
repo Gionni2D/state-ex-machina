@@ -1,4 +1,5 @@
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 def pomName = ext.pomName
 def pomDescription = ext.pomDescription
@@ -44,6 +45,10 @@ publishing {
             url = localRepo
         }
     }
+}
+
+signing {
+    sign publishing.publications
 }
 
 tasks.register("copyRepo", Copy) {
