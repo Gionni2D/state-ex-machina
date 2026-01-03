@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.merge
 import state.ex.machina.dsl.EffectReceiverScope
+import state.ex.machina.dsl.buildEffectHandlers
 import state.ex.machina.foundation.Effect
 import state.ex.machina.foundation.EffectReceiver
 import state.ex.machina.foundation.Intent
@@ -18,9 +19,7 @@ inline fun <E : Effect> EffectReceiver<E>.collectEffect(
     crossinline builder: EffectReceiverScope<E>.() -> Unit
 ) {
     LaunchedEffect(effectFlow) {
-        EffectReceiverScope(effectFlow)
-            .apply(builder)
-            .effectHandlers
+        buildEffectHandlers(effectFlow, builder)
             .merge()
             .collect()
     }
