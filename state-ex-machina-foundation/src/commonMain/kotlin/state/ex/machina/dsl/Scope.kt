@@ -42,22 +42,27 @@ interface SideEffectScope<S : State> {
     fun updateState(reducer: Reducer<S>): S
 }
 
-class EffectReceiverScope<E : Effect>(
-    val effects: Flow<E> // TODO: find a way to make it private
+class EffectReceiverScope<E : Effect> @PublishedApi internal constructor(
+    @PublishedApi internal val effects: Flow<E>
 ) {
-    val effectHandlers = mutableListOf<Flow<*>>() // TODO: find a way to make it non-mutable
+    @PublishedApi
+    internal val _effectHandlers = mutableListOf<Flow<*>>()
+
+    @PublishedApi
+    internal val effectHandlers: List<Flow<*>>
+        get() = _effectHandlers
 
     inline fun <reified E2> on(
         noinline handler: suspend (E2) -> Unit
     ) {
-        effectHandlers += effects.filterIsInstance<E2>().onEach(handler)
+        _effectHandlers += effects.filterIsInstance<E2>().onEach(handler)
     }
 
     fun on(
         predicate: suspend (E) -> Boolean,
         handler: suspend (E) -> Unit
     ) {
-        effectHandlers += effects.filter(predicate).onEach(handler)
+        _effectHandlers += effects.filter(predicate).onEach(handler)
     }
 }
 
