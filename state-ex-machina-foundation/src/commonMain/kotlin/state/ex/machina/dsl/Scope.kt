@@ -66,6 +66,15 @@ class EffectReceiverScope<E : Effect> @PublishedApi internal constructor(
     }
 }
 
+inline fun <E : Effect> buildEffectHandlers(
+    effects: Flow<E>,
+    builder: EffectReceiverScope<E>.() -> Unit
+): List<Flow<*>> {
+    return EffectReceiverScope(effects)
+        .apply(builder)
+        .effectHandlers
+}
+
 //////////////////////////
 //// Scope extensions ////
 //////////////////////////
